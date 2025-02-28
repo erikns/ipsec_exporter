@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
@@ -9,11 +10,14 @@ import (
 )
 
 func main() {
+	listenFlag := flag.String("listen", ":9814", "Address to listen on")
+	flag.Parse()
+
 	log.Println("Up and Running")
 	strongswanCollector := NewStrongswanCollector()
 	strongswanCollector.init()
 	http.Handle("/metrics", promhttp.Handler())
-	log.Fatalln(http.ListenAndServe(":9814", nil))
+	log.Fatalln(http.ListenAndServe(*listenFlag, nil))
 }
 func listSAs() ([]LoadedIKE, error) {
 	s, err := vici.NewSession()
